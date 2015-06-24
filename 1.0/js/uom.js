@@ -334,14 +334,44 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
           // ListFilter = (function() { <--------------------------
           //    function ListFilter(el) {
           t = this;
+
+          // Gary
+          // A list of color box
           this.tables = document.querySelectorAll('ul.filtered-listing-grid');
+
+          // Gary
+          // The drop down box on the right.
+          // Checkboxes on the left and drop down on the right
           this.select = this.el.querySelector('select');
+
+          // Gary
+          // e.g. so all study areas === this.select.value === -1 initially
           this.curr = this.select.value;
+
           if (typeof Isotope !== 'undefined') {
             this.isos = new Array;
             _ref = this.tables;
+
+            // Gary
+            // So we loop through all the boxes (e.g. study areas)
+            // So we need _i to help us increment????
             for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+              // Gary
+              // table === ul.filtered-listing-grid
               table = _ref[i];
+
+              // Gary
+              // http://isotope.metafizzy.co, basically a fancy filter list.
+              //
+              // A sample box 
+              // <li class="category-a item" style="position: absolute; left: 0px; top: 0px;">
+              //    <a href="scholarship.html">Nominavi appetere<strong>Exerci Oportere</strong></a>
+              // </li>
+              // itemSelector: '.item'
+              // masonry === pinterest style
+              // columnWidth: '.item'
+              //
+              // Need to pass table (i.e. the grid list) to isotope
               this.isos[i] = new Isotope(table, {
                 itemSelector: '.item',
                 layoutMode: 'fitRows',
@@ -351,37 +381,86 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
               });
             }
           }
+
+          // Gary        
+          // http://stackoverflow.com/questions/14377590/queryselector-and-queryselectorall-vs-getelementsbyclassname-and-getelementbyid
+          // All checkboxes except the select all checkbox
           this.categories = this.el.querySelectorAll('input.checkbox:not([data-tag="all"])');
+
+          // Gary
+          // Only the select all checkbox
           this.allcategories = this.el.querySelector('input.checkbox[data-tag="all"]');
+
+          // Gary
+          // q === ["", "filter=category-a,category-b&test=yes&test_1=no"]
+          // q[1] is what we need
           q = window.location.search.split(/\?/);
+
           if (q.length > 1) {
+            // Gary
+            // q === ["", "filter=category-a,category-b&test=yes&test_1=no"]
             q = q[1];
           }
+
+          // Gary
+          // q.split("&") === ["filter=category-a,category-b", "test=yes", "test_1=no"]
           if (q.length > 1) {
             q = q.split("&");
           }
+
           q2 = "";
           if (q.length > 0) {
             for (_j = 0, _len1 = q.length; _j < _len1; _j++) {
               pair = q[_j];
               tmp = pair.split("=");
+      
+              // Gary
+              // It use the keyword "filter", this may cause potential bug.
               if (tmp[0] === "filter") {
+                // Gary
+                // q2 === category-a,category-b 
                 q2 = tmp[1];
               }
             }
           }
+
           if (q2.length > 1) {
+            // Gary
+            // So you can do something like xx.html?filter=category-a,category-b,category-c
             q2 = q2.split(",");
           }
+
+          // Gary
+          // All checkboxes of filter
           _ref1 = this.el.querySelectorAll('input.checkbox');
+
           for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
             filter = _ref1[_k];
+
+            // Gary
+            // so each input checkbox has a click listener.
             filter.addEventListener('click', function(e) {
               return t.process(e.target || e.srcElement);
             });
+
+            // Gary
+            // Depend on how many filters are passed on the url
+            // Loop through each input check box
             for (_l = 0, _len3 = q2.length; _l < _len3; _l++) {
               preselected = q2[_l];
+              
+              // Gary
+              // filter === <input class="checkbox" data-tag="category-b" id="c2" name="f[course_type]" type="checkbox">
+              // 1. the input checkbox filter needs to have data-tag for category-b
+              // 2. the listing box needs to have category-b in it is class e.g. class="category-b"? 
               if (preselected === filter.getAttribute('data-tag')) {
+                // Gary
+                // So we trigger a click event here
+                // so this gets called
+                //
+                // filter.addEventListener('click', function(e) {
+                //    return t.process(e.target || e.srcElement);
+                // });
                 filter.click();
               }
             }
@@ -394,26 +473,56 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
         }
 
         ListFilter.prototype.process = function(target) {
+          // Gary
+          // target === the input checkbox
           var category, displayed_categories, table, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3;
           if (this.allcategories && target && target.getAttribute('data-tag') === 'all' && target.checked) {
+            // Gary
+            // Loop through all checkboxes.
             _ref = this.categories;
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               category = _ref[_i];
+              // Gary
+              // Question: does javascript pass by reference?
+              // http://stackoverflow.com/questions/13104494/does-javascript-pass-by-reference  
+              /*
+                function replace(ref) {
+                  ref = {}; // this code does _not_ affect the object passed
+                }
+
+                function update(ref) {
+                  ref.key = 'newvalue';  // this code _does_ affect the _contents_ of the object
+                }
+
+                var a = { key: 'value' };
+                replace(a);  // a still has its original value - it's unmodfied
+                update(a);   // the _contents_ of 'a' are changed
+
+                Answer: e.g. when we access object property, pass by ref?
+              */ 
               category.checked = false;
             }
             this.showAllTables();
           } else {
+            // Gary
+            // We only select certain filters, so disable the select-all          
             if (this.allcategories) {
               this.allcategories.checked = false;
             }
+
+            // Gary
+            // Like the global variable
             displayed_categories = [];
             _ref1 = this.categories;
             for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
               category = _ref1[_j];
               if (category.checked) {
+                // Gary
+                // We push the name of category
                 displayed_categories.push(category.getAttribute('data-tag'));
               }
             }
+
             if (displayed_categories.length === 0) {
               if (this.allcategories) {
                 this.allcategories.checked = true;
@@ -428,6 +537,8 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
             } else {
               _ref3 = this.tables;
               for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
+                // Gary
+                // table is the individual list of items.
                 table = _ref3[_l];
                 this.showTable(table, displayed_categories);
               }
@@ -441,7 +552,15 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
           _ref = this.tables;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             table = _ref[_i];
+
+            // Gary
+            // <div class="filtered-listing-section" data-category="section1"> 
+            //  <bside>
+            //    filtered-listing-grid === table          
             category = table.parentNode.parentNode;
+
+            // Gary
+            // <div class="filtered-listing-section" data-category="section1|bla|bla1|bla2"> ---> you can do this?
             if (table.countSelector('.item') > 0 && (this.curr === '-1' || (category.hasAttribute('data-category') && (_ref1 = this.curr, __indexOf.call(category.getAttribute('data-category').split('|'), _ref1) >= 0)))) {
               category.removeClass('hide');
             } else {
@@ -449,32 +568,54 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
             }
           }
           if (typeof Isotope !== 'undefined') {
+
+            // Gary
+            // All tables with isos
             _ref2 = this.isos;
             _results = [];
             for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
               iso = _ref2[_j];
+              // Gary
+              // Here is the truth filter.
+              // Remember previously, we add/remove .item form <li>
               _results.push(iso.arrange({
                 filter: '.item'
               }));
             }
+            
+            // Gary
+            // So we also remember the result.
             return _results;
           }
         };
 
         ListFilter.prototype.showTable = function(table, selectedtags) {
           var el, show, tag, _i, _j, _len, _len1, _ref, _results;
+          // Gary
+          // So the table is just to grab stuff.
           _ref = table.querySelectorAll('li');
           _results = [];
+    
+          // Gary
+          // Loop through all list item of color box (e.g. study area)
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             el = _ref[_i];
             show = false;
+
+            // Gary
+            // e.g. can be multiple tags, e.g. category-a,category-b
             for (_j = 0, _len1 = selectedtags.length; _j < _len1; _j++) {
               tag = selectedtags[_j];
+      
+              // Gary
+              // So the if list.class === the name of tag, then it is show.
               if (el.hasClass(tag)) {
                 show = true;
               }
             }
             if (show) {
+              // Gary
+              // So the .item is like show and hide
               _results.push(el.addClass('item'));
             } else {
               _results.push(el.removeClass('item'));
