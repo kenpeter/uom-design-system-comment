@@ -465,7 +465,11 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
               }
             }
           }
+        
           this.process();
+
+          // Gary
+          // So here we listen to the dropdown on the right
           this.select.addEventListener('change', function(e) {
             t.curr = this.value;
             return t.redraw();
@@ -561,11 +565,13 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
 
             // Gary
             // <div class="filtered-listing-section" data-category="section1|bla|bla1|bla2"> ---> you can do this?
+            // So here we handle the drop down selection (i.e. filter) on the top right, basically hide/show the entire <ul>
             if (table.countSelector('.item') > 0 && (this.curr === '-1' || (category.hasAttribute('data-category') && (_ref1 = this.curr, __indexOf.call(category.getAttribute('data-category').split('|'), _ref1) >= 0)))) {
               category.removeClass('hide');
             } else {
               category.addClass('hide');
             }
+
           }
           if (typeof Isotope !== 'undefined') {
 
