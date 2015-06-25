@@ -148,7 +148,13 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
         function UOMAccordionComponent(el) {
           var close, t;
           this.el = el;
+
+          // Gary
+          // Base on this http://web.unimelb.edu.au/components/accordion
+          // el is the markup with text, allow you to click, then show/hide another text
+          // this.el.parentNode === <li> in this case.
           this.container = this.el.parentNode;
+
           this.hidden = this.container.querySelector('.accordion__hidden');
           t = this;
           close = this.container.querySelector('.accordion__close');
@@ -168,11 +174,26 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
             return t.container.toggleClass('accordion__visible');
           });
           this.el.setAttribute('tabindex', '0');
+  
+          
           this.el.addEventListener('click', function(e) {
             var container, s, target, _i, _len, _ref;
+
             e.preventDefault();
+
+            // Gary
+            // the target is element with .accordion__title
             target = e.target || e.srcElement;
+
+            // Gary
+            // Have a look at the comment above,
+            // t is this class.
+            // t.container === <li>, then t.container.parentNode === <ul> in this case
+            // http://web.unimelb.edu.au/components/accordion 
             container = t.container.parentNode;
+
+            // Gary
+            // container should be table, if somehow we are in the TR element.
             if (container.nodeName === 'TR' || container.parentNode.nodeName === 'TR') {
               while (container.nodeName !== 'TABLE') {
                 if (container.parentNode) {
@@ -180,13 +201,20 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
                 }
               }
             }
+
             if (container && container.getAttribute('data-single-focus') === "") {
               _ref = container.querySelectorAll('.accordion__visible');
               for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                 s = _ref[_i];
+                
+                // Gary
+                // So we reset everything, then toggle one below
                 s.removeClass('accordion__visible');
               }
             }
+            
+            // Gary
+            // Toggle one
             return t.container.toggleClass('accordion__visible');
           });
         }
@@ -194,13 +222,32 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
         return UOMAccordionComponent;
 
       })();
+
+      /* Sample markup
+        <li>
+          <span class="accordion__title" tabindex="0">Ferri dictas abhorreant</span>
+          <div class="accordion__hidden">
+            <p>
+              Ex causae vocent viderer qui. Ei per semper principes. Epicuri sententiae usu at. Te commodo suscipit definitiones est.
+            </p>
+            <a class="accordion__close"></a>
+          </div>
+        </li>
+
+      */ 
       if (supportedmodernbrowser) {
+        // Gary
+        // _ref, is the markup with text 
         _ref = document.querySelectorAll('.accordion__title');
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           el = _ref[_i];
+          
+          // Gary
+          // The idea is, we can objectify any markup, add some cool properties/methods to it. 
           new UOMAccordionComponent(el);
         }
       }
+
       clickWithEnter = function(e) {
         var elem;
         elem = document.activeElement;
@@ -213,6 +260,7 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
           }
         }
       };
+
       if (window.addEventListener) {
         return window.addEventListener('keydown', clickWithEnter);
       } else if (window.attachEvent) {
