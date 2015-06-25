@@ -254,6 +254,41 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
   }
 
 }).call(this);
+
+// Gary
+// So what this style? Define and call?
+/*
+(function() {
+  if(!window.My_need) {
+    window.My_need = function() {
+      var v1, v2, v3....; // Later we use
+
+      My_need = (function(){ // Define class
+        function My_need(x) { // Constructor
+          .....
+        }
+
+        My_need.prototype.my_func = function() {
+          .....
+        }
+
+        My_need.prototype.my_func_1 = function() {
+          ....
+        }
+
+        return My_need // Return the class itself.
+
+      })(); // Call it
+
+      // Use the class
+      _results.push(new My_need(whatever_element_you_need));
+      
+      return _results;
+    }
+  }  
+}).call(this); // Call and pass this, but what is "this"?  "this" is the actual html page, on the top level.
+
+*/
 (function() {
   if (!window.UOMUnlockChecklist) {
     window.UOMUnlockChecklist = function() {
@@ -263,27 +298,55 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
           var item, t, _i, _len, _ref;
           this.el = el;
           t = this;
+
+          // Gary
+          // e.g. http://web.unimelb.edu.au/components/checklist
+          // data-unlock-target === the id of "continue" button, if they match up,
+          // All input checkboxes need to be checked.
           this.target = document.getElementById(this.el.getAttribute('data-unlock-target'));
+
+          // Gary
+          // this.target === the 'continue' button
           this.target.addEventListener('click', function(e) {
             if (this.hasClass('disabled')) {
               return e.preventDefault();
             }
           });
+
+          // Gary
+          // If items.length === active (how many active), then we unlock.
           this.items = this.el.querySelectorAll('li');
           this.active = this.el.countSelector('.on');
+
+          // Gary
+          // This is initial checking num of input VS checked input box
           this.toggleDisable();
+
           _ref = this.items;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             item = _ref[_i];
+
+            // Gary
+            // We are doing reference things
             item.addEventListener('click', function(e) {
               var target;
               target = e.target || e.srcElement;
+              
+              // Gary
+              // It seems label's width actually cover the input check box, so
+              // we don't need to condition verify the input checkbox
               if (target.nodeName === 'LABEL' || target.nodeName === 'SPAN') {
+                // Gary
+                // We predefine the on to <li class="on">
                 if (this.hasClass('on')) {
                   t.active -= 1;
                 } else {
                   t.active += 1;
                 }
+  
+                // Gary
+                // The actual disable/enable
+                // It seems we always want to return something for feedback????
                 return t.toggleDisable();
               }
             });
@@ -291,10 +354,14 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
         }
 
         UnlockChecklist.prototype.toggleDisable = function() {
+          // Gary
+          // this === UnlockChecklist
           if (this.active === this.items.length) {
+            // Remove disable
             this.target.removeClass('disabled');
             return this.target.removeAttribute('disabled');
           } else {
+            // Add disable
             this.target.addClass('disabled');
             return this.target.setAttribute('disabled', 'disabled');
           }
@@ -302,18 +369,24 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
 
         return UnlockChecklist;
 
-      })();
+      })(); // Gary, so we define the class UnlockChecklist with UnlockChecklist and toggleDisable, and we call it without this.
+
+      // Gary
       _ref = document.querySelectorAll('ul.checklist[data-unlock-target]');
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         list = _ref[_i];
+        // Gary
+        // So we use the class we just defined above.
         _results.push(new UnlockChecklist(list));
       }
-      return _results;
+      return _results; // Gary, now this end window.UOMUnlockChecklist.
     };
   }
 
 }).call(this);
+
+
 (function() {
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -2015,6 +2088,10 @@ window.UOMloadComponents = function() {
   window.UOMLeafletMap();
 
   window.UOMImageGallery();
+
+  // Gary
+  // 1.0 doesn't include this, but I test it here
+  window.UOMUnlockChecklist();
 };
 
 if (window.attachEvent) {
