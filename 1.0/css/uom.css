@@ -3916,7 +3916,15 @@ body {
     border: 1px solid #0076de;
     padding: 0; }
     .uomcontent .styled-select select {
-      -moz-appearance: window; }
+      /*
+        Gary: 
+        http://stackoverflow.com/questions/8430279/how-to-style-the-option-with-only-css
+        
+        -moz-appearance: window; the <select> has white cover on it.
+      */
+      /*-moz-appearance: window;*/
+      -moz-appearance: none;
+    }
     .uomcontent .styled-select.invalid, .uomcontent .styled-select.invalid:hover, .uomcontent .styled-select.alt.invalid, .uomcontent .styled-select.alt.invalid:hover {
       background-color: #fff;
       border-color: #df0620;
