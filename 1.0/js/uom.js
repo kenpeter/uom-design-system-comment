@@ -800,6 +800,7 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
   }
 
 }).call(this);
+
 (function() {
   if (!window.UOMFancySelect) {
     window.UOMFancySelect = function() {
@@ -807,23 +808,60 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
       FancySelect = (function() {
         function FancySelect(el) {
           var i, wrapper, _i, _len, _ref;
+          
+          // Gary
+          // What is el
+          // select#f-select2.clear, which is the dropdown selection on the top right
           this.el = el;
+
+          // Gary
+          // this.parent == <div>, it is a plain div
+          // Save it to this.parent, because we need to remove its children later.
           this.parent = this.el.parentNode;
+
+          // Gary
+          // wrapper == div.styled-select
           wrapper = document.createElement('div');
           wrapper.addClass('styled-select');
+
           if (this.el.hasClass('alt')) {
             wrapper.addClass('alt');
           }
+          // Gary
+          // wrapper == <div class="styled-select clear">
           if (this.el.hasClass('clear')) {
             wrapper.addClass('clear');
           }
           if (this.el.hasClass('clear-dark')) {
             wrapper.addClass('clear-dark');
           }
+
+          // Gary
+          // The up and down arrows
           wrapper.innerHTML = "<svg class=\"icon\" role=\"img\"><use xlink:href=\"#icon-north-south\"></use></svg>";
+
+          // Gary
+          // this.el === select#f-select2.clear
+          // this.el.parentNode === <div> 
           this.el.parentNode.removeChild(this.el);
+
+          // Gary
+          // wrapper.firstChild is the up and down arrows
+          // Result:
+          // <div class="styled-select clear">
+          //    select#f-select2.clear
+          //    <svg class="icon"....</svg> 
           wrapper.insertBefore(this.el, wrapper.firstChild);
+
+          // Gary
+          // Result:
+          // <div>
+          //  <div class="styled-select clear">
+          //    select#f-select2.clear
+          //    <svg class="icon"....</svg>
           this.parent.appendChild(wrapper);
+
+
           if (!/(MSIE|Trident)/g.test(navigator.userAgent)) {
             _ref = this.parent.querySelectorAll('svg.icon');
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -857,6 +895,8 @@ var supportedmodernbrowser = !/(MSIE 7.0)/g.test(navigator.userAgent);
   }
 
 }).call(this);
+
+
 (function() {
   if (!window.UOMValid) {
     window.UOMValid = function() {
