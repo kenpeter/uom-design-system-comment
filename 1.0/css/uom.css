@@ -3917,13 +3917,15 @@ body {
     padding: 0; }
     .uomcontent .styled-select select {
       /*
-        Gary: 
+        Gary, bug?
+        -moz-appearance: window; the <select> has white cover on it. 
+        Test on firefox 39 ubuntu, firefox 38 win7
+
+        Research: 
         http://stackoverflow.com/questions/8430279/how-to-style-the-option-with-only-css
-        
-        -moz-appearance: window; the <select> has white cover on it.
+        https://developer.mozilla.org/en-US/docs/Web/CSS/-moz-appearance      
       */
       /*-moz-appearance: window;*/
-      -moz-appearance: none;
     }
     .uomcontent .styled-select.invalid, .uomcontent .styled-select.invalid:hover, .uomcontent .styled-select.alt.invalid, .uomcontent .styled-select.alt.invalid:hover {
       background-color: #fff;
